@@ -1,30 +1,30 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class AllSeatDto {
-  @ApiProperty()
+  @ApiProperty({ example: 1 })
   page: number;
 
-  @ApiProperty()
+  @ApiProperty({ example: 20 })
   perpage: number;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'id' })
   sortbycolumn?: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'asc' })
   orderby?: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'General' })
   seat_zone?: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'B' })
   seat_row?: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '' })
   seat_number?: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'AVAILABLE' })
   seat_status?: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 2 })
   event_id?: number;
 }

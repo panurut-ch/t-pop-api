@@ -70,11 +70,13 @@ export class SeatsService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} seat`;
+    return this.prisma.seat.findUnique({
+      where: { id },
+    });
   }
 
   update(id: number, updateSeatDto: UpdateSeatDto) {
-    console.log('updateSeatDto', updateSeatDto)
+    console.log('updateSeatDto', updateSeatDto);
     this.logger.log('update');
     return this.prisma.seat.update({
       where: { id },

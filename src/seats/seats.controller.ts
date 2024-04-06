@@ -21,6 +21,7 @@ import {
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('seats')
+@ApiTags('seats')
 export class SeatsController {
   constructor(private readonly seatsService: SeatsService) {}
 
@@ -43,7 +44,7 @@ export class SeatsController {
     return await this.seatsService.findAllPaging(allSeatDto);
   }
 
-  @Get(':id')
+  @Get('/detail/:id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   findOne(@Param('id') id: string) {

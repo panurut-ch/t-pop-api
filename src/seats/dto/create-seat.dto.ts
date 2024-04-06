@@ -18,7 +18,11 @@ export class CreateSeatDto {
   @ApiProperty()
   seat_number: string;
 
-  @ApiProperty({ enum: SeatStatus, enumName: 'SeatStatus' })
+  @ApiProperty({
+    enum: SeatStatus,
+    enumName: 'SeatStatus',
+    example: 'RESERVED',
+  })
   seat_status: SeatStatus;
 
   @IsNumber()
