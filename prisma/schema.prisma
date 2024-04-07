@@ -16,18 +16,25 @@ model Event {
   created_date      DateTime @default(now())
   updated_date      DateTime @updatedAt
   seats             Seat[]
+
+  @@map("events")
 }
 
 model Seat {
-  id           Int        @id @default(autoincrement())
-  seat_zone    String
-  seat_row     String
-  seat_number  String
-  seat_status  SeatStatus
-  created_date DateTime   @default(now())
-  updated_date DateTime   @updatedAt
-  event        Event?     @relation(fields: [event_id], references: [id])
-  event_id     Int?
+  id               Int        @id @default(autoincrement())
+  seat_zone        String
+  seat_row         String
+  seat_number      String
+  seat_status      SeatStatus
+  created_date     DateTime   @default(now())
+  updated_date     DateTime   @updatedAt
+  event            Event?     @relation(fields: [event_id], references: [id])
+  event_id         Int?
+  reserved_user    User?      @relation(fields: [reserved_user_id], references: [id])
+  reserved_user_id Int?
+
+  @@unique([seat_zone, seat_row, seat_number, event_id])
+  @@map("seats")
 }
 
 enum SeatStatus {
@@ -36,10 +43,13 @@ enum SeatStatus {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
-  name         String?
-  email        String   @unique
-  password     String
-  created_date DateTime @default(now())
-  updated_date DateTime @updatedAt
+  id             Int      @id @default(autoincrement())
+  name           String?
+  email          String   @unique
+  password       String
+  created_date   DateTime @default(now())
+  updated_date   DateTime @updatedAt
+  reserved_seats Seat[]
+
+  @@map("users")
 }

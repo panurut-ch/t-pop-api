@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Put,
 } from '@nestjs/common';
 import { SeatsService } from './seats.service';
 import { CreateSeatDto } from './dto/create-seat.dto';
@@ -25,19 +26,21 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 export class SeatsController {
   constructor(private readonly seatsService: SeatsService) {}
 
-  @Post()
-  create(@Body() createSeatDto: CreateSeatDto) {
-    return this.seatsService.create(createSeatDto);
-  }
-
-  @Get()
+  @Post('/add')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  async findAll() {
-    return await this.seatsService.findAll();
+  async create(@Body() createSeatDto: CreateSeatDto) {
+    return await this.seatsService.create(createSeatDto);
   }
 
-  @Post('all')
+  // @Get()
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth()
+  // async findAll() {
+  //   return await this.seatsService.findAll();
+  // }
+
+  @Post('filter')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   async findAllPaging(@Body() allSeatDto: AllSeatDto) {
@@ -47,15 +50,15 @@ export class SeatsController {
   @Get('/detail/:id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  findOne(@Param('id') id: string) {
-    return this.seatsService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.seatsService.findOne(+id);
   }
 
-  @Patch('/update/:id')
+  @Put('/update/:id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  update(@Param('id') id: string, @Body() updateSeatDto: UpdateSeatDto) {
-    return this.seatsService.update(+id, updateSeatDto);
+  async update(@Param('id') id: string, @Body() updateSeatDto: UpdateSeatDto) {
+    return await this.seatsService.update(+id, updateSeatDto);
   }
 
   @Delete('/delete/:id')

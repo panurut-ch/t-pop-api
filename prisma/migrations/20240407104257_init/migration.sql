@@ -24,6 +24,7 @@ CREATE TABLE "Seat" (
     "created_date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_date" TIMESTAMP(3) NOT NULL,
     "event_id" INTEGER,
+    "reserved_user_id" INTEGER,
 
     CONSTRAINT "Seat_pkey" PRIMARY KEY ("id")
 );
@@ -44,7 +45,13 @@ CREATE TABLE "User" (
 CREATE UNIQUE INDEX "Event_event_name_key" ON "Event"("event_name");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Seat_seat_zone_seat_row_seat_number_key" ON "Seat"("seat_zone", "seat_row", "seat_number");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- AddForeignKey
 ALTER TABLE "Seat" ADD CONSTRAINT "Seat_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "Event"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Seat" ADD CONSTRAINT "Seat_reserved_user_id_fkey" FOREIGN KEY ("reserved_user_id") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
