@@ -8,6 +8,8 @@ import { UpdateSeatDto } from './dto/update-seat.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { Logger } from '@nestjs/common';
+import { ReserveSeatDto } from './dto/reserve-seat.dto';
+import { ViewReservedSeatDto } from './dto/view-reserved.dto';
 
 @Injectable()
 export class SeatsService {
@@ -15,32 +17,37 @@ export class SeatsService {
 
   constructor(private prisma: PrismaService) {}
 
-  async create(createSeatDto: CreateSeatDto) {
+  async create(createSeatDtoArray: CreateSeatDto[]) {
     try {
-      this.logger.log('create seat function');
-      console.log('createSeatDto', createSeatDto);
-      const { seat_zone, seat_row, seat_number, event_id } = createSeatDto;
+      const createdSeats = [];
+      for (const createSeatDto of createSeatDtoArray) {
+        this.logger.log('Create seat function');
+        console.log('CreateSeatDto', createSeatDto);
+        const { seat_zone, seat_row, seat_number, event_id } = createSeatDto;
 
-      const existingSeat = await this.prisma.seat.findUnique({
-        where: {
-          seat_zone_seat_row_seat_number_event_id: {
-            seat_zone,
-            seat_row,
-            seat_number,
-            event_id,
+        const existingSeat = await this.prisma.seat.findUnique({
+          where: {
+            seat_zone_seat_row_seat_number_event_id: {
+              seat_zone,
+              seat_row,
+              seat_number,
+              event_id,
+            },
           },
-        },
-      });
+        });
 
-      if (existingSeat) {
-        throw new ConflictException('Seat already exists');
+        if (existingSeat) {
+          throw new ConflictException('Seat already exists');
+        }
+
+        const createdSeat = await this.prisma.seat.create({
+          data: createSeatDto,
+        });
+
+        createdSeats.push(createdSeat);
       }
 
-      const data = await this.prisma.seat.create({
-        data: createSeatDto,
-      });
-
-      return { data };
+      return { data: createdSeats };
     } catch (error) {
       this.logger.error(error.message);
       throw error;
@@ -51,8 +58,8 @@ export class SeatsService {
     try {
       this.logger.log('findAllPaging function');
       console.log('allSeatDto', allSeatDto);
-      const page = parseInt(allSeatDto.page) || 1;
-      const perpage = parseInt(allSeatDto.perpage) || 10;
+      const page = Number(allSeatDto.page) || 1;
+      const perpage = Number(allSeatDto.perpage) || 10;
       const sortbycolumn = allSeatDto.sortbycolumn || 'id';
       const orderby = allSeatDto.orderby || 'asc';
       const skip = (page - 1) * perpage;
@@ -74,7 +81,7 @@ export class SeatsService {
         filterOptions.seat_status = allSeatDto.seat_status;
       }
       if (allSeatDto.event_id) {
-        filterOptions.event_id = parseInt(allSeatDto.event_id);
+        filterOptions.event_id = Number(allSeatDto.event_id);
       }
 
       const [data, total] = await Promise.all([
@@ -127,7 +134,7 @@ export class SeatsService {
           where: { id },
           data: updateSeatDto,
         });
-        return { data };
+        return { message: 'Seat Updated successfully', data };
       } catch (error) {
         if (error.code === 'P2002') {
           throw new ConflictException('Seat already exists.');
@@ -154,7 +161,78 @@ export class SeatsService {
       const data = await this.prisma.seat.delete({
         where: { id },
       });
-      return { data };
+      return { message: 'Seat removed successfully', data };
+    } catch (error) {
+      this.logger.error(error.message);
+      throw error;
+    }
+  }
+
+  async reserve(reserveSeatDtoArray: ReserveSeatDto[]) {
+    try {
+      const reservedSeats = [];
+      for (const reserveSeatDto of reserveSeatDtoArray) {
+        const { id } = reserveSeatDto;
+        this.logger.log('Reserve function id: ' + id);
+        console.log('ReserveSeatDto', reserveSeatDto);
+
+        const existingSeat = await this.prisma.seat.findUnique({
+          where: { id },
+        });
+
+        if (!existingSeat) {
+          throw new NotFoundException(`Seat with ID ${id} not found.`);
+        }
+
+        const updatedSeat = await this.prisma.seat.update({
+          where: { id },
+          data: {
+            reserved_user_id: reserveSeatDto.reserved_user_id,
+            seat_status: 'RESERVED',
+          },
+        });
+
+        reservedSeats.push(updatedSeat);
+      }
+
+      return { message: 'Seats reserved successfully', data: reservedSeats };
+    } catch (error) {
+      this.logger.error(error.message);
+      throw error;
+    }
+  }
+
+  async viewReservedSeat(
+    viewReservedSeatDto: ViewReservedSeatDto,
+  ): Promise<{ data: any[]; total: number }> {
+    try {
+      this.logger.log('findAllPaging function');
+      console.log('viewReservedSeatDto', viewReservedSeatDto);
+      const page = Number(viewReservedSeatDto.page) || 1;
+      const perpage = Number(viewReservedSeatDto.perpage) || 10;
+      const sortbycolumn = viewReservedSeatDto.sortbycolumn || 'id';
+      const orderby = viewReservedSeatDto.orderby || 'asc';
+      const skip = (page - 1) * perpage;
+      const reserved_user_id: number = Number(
+        viewReservedSeatDto.reserved_user_id,
+      );
+
+      const orderBy = {};
+      orderBy[sortbycolumn] = orderby;
+
+      const where = {
+        reserved_user_id: reserved_user_id,
+      };
+
+      const [data, total] = await Promise.all([
+        this.prisma.seat.findMany({
+          where: where,
+          orderBy: orderBy,
+          take: perpage,
+        }),
+        this.prisma.seat.count({ where: where }),
+      ]);
+      return { total, data };
     } catch (error) {
       this.logger.error(error.message);
       throw error;

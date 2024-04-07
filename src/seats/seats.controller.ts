@@ -21,6 +21,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { ReserveSeatDto } from './dto/reserve-seat.dto';
+import { ViewReservedSeatDto } from './dto/view-reserved.dto';
 
 @Controller('seats')
 @ApiTags('seats')
@@ -30,7 +32,7 @@ export class SeatsController {
   @Post('/add')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  async create(@Body() createSeatDto: CreateSeatDto) {
+  async create(@Body() createSeatDto: CreateSeatDto[]) {
     return await this.seatsService.create(createSeatDto);
   }
 
@@ -60,5 +62,19 @@ export class SeatsController {
   @ApiBearerAuth()
   async remove(@Param('id') id: string) {
     return await this.seatsService.remove(+id);
+  }
+
+  @Post('/reserve')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async reserve(@Body() reserveSeatDto: ReserveSeatDto[]) {
+    return await this.seatsService.reserve(reserveSeatDto);
+  }
+
+  @Get('/view-reserved')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async viewReservedSeat(@Query() viewReservedSeatDto: ViewReservedSeatDto) {
+    return await this.seatsService.viewReservedSeat(viewReservedSeatDto);
   }
 }
