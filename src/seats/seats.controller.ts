@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Put,
+  Query,
 } from '@nestjs/common';
 import { SeatsService } from './seats.service';
 import { CreateSeatDto } from './dto/create-seat.dto';
@@ -33,17 +34,10 @@ export class SeatsController {
     return await this.seatsService.create(createSeatDto);
   }
 
-  // @Get()
-  // @UseGuards(JwtAuthGuard)
-  // @ApiBearerAuth()
-  // async findAll() {
-  //   return await this.seatsService.findAll();
-  // }
-
-  @Post('filter')
+  @Get('filter')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  async findAllPaging(@Body() allSeatDto: AllSeatDto) {
+  async findAllPaging(@Query() allSeatDto: AllSeatDto) {
     return await this.seatsService.findAllPaging(allSeatDto);
   }
 

@@ -47,29 +47,12 @@ export class SeatsService {
     }
   }
 
-  // async findAll() {
-  //   try {
-  //     this.logger.log('findAll function');
-  //     const [data, total] = await Promise.all([
-  //       this.prisma.seat.findMany({
-  //         orderBy: { id: 'asc' },
-  //         take: 10,
-  //       }),
-  //       this.prisma.event.count(),
-  //     ]);
-  //     return { total, data };
-  //   } catch (error) {
-  //     this.logger.error(error.message);
-  //     throw error;
-  //   }
-  // }
-
   async findAllPaging(allSeatDto): Promise<{ data: any[]; total: number }> {
     try {
       this.logger.log('findAllPaging function');
       console.log('allSeatDto', allSeatDto);
-      const page = allSeatDto.page || 1;
-      const perpage = allSeatDto.perpage || 10;
+      const page = parseInt(allSeatDto.page) || 1;
+      const perpage = parseInt(allSeatDto.perpage) || 10;
       const sortbycolumn = allSeatDto.sortbycolumn || 'id';
       const orderby = allSeatDto.orderby || 'asc';
       const skip = (page - 1) * perpage;
@@ -91,7 +74,7 @@ export class SeatsService {
         filterOptions.seat_status = allSeatDto.seat_status;
       }
       if (allSeatDto.event_id) {
-        filterOptions.event_id = allSeatDto.event_id;
+        filterOptions.event_id = parseInt(allSeatDto.event_id);
       }
 
       const [data, total] = await Promise.all([
