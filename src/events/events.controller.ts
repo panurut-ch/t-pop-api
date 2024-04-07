@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
+  Put,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -18,38 +20,46 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { AllEventDto } from './dto/all-event.dto';
 
 @Controller('events')
 @ApiTags('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
-  @Post()
-  create(@Body() createEventDto: CreateEventDto) {
-    return this.eventsService.create(createEventDto);
+  @Post('/add')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async create(@Body() createEventDto: CreateEventDto) {
+    return await this.eventsService.create(createEventDto);
   }
 
-  @Get()
-  async findAll() {
-    return await this.eventsService.findAll();
+  @Get('filter')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async findAllPaging(@Query() allEventDto: AllEventDto) {
+    return await this.eventsService.findAllPaging(allEventDto);
   }
 
-  @Get(':id')
+  @Get('/detail/:id')
   async findOne(@Param('id') id: string) {
     return await this.eventsService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Put('/update/:id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
-    return this.eventsService.update(+id, updateEventDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateEventDto: UpdateEventDto,
+  ) {
+    return await this.eventsService.update(+id, updateEventDto);
   }
 
-  @Delete(':id')
+  @Delete('/delete/:id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  remove(@Param('id') id: string) {
-    return this.eventsService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.eventsService.remove(+id);
   }
 }
