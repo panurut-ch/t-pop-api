@@ -21,6 +21,13 @@ export class UsersService {
   async create(createUserDto: CreateUserDto) {
     try {
       console.log('create', createUserDto);
+      const existingUser = await this.prisma.user.findUnique({
+        where: { email: createUserDto.email },
+      });
+      if (existingUser) {
+        throw new ConflictException('User email already exists.');
+      }
+
       const hashedPassword = await bcrypt.hash(
         createUserDto.password,
         roundsOfHashing,
@@ -33,6 +40,9 @@ export class UsersService {
       });
       return { message: 'User Registered successfully', data };
     } catch (error) {
+      if (error.code === 'P2002') {
+        throw new ConflictException('User email already exists.');
+      }
       this.logger.error(error.message);
       throw error;
     }
