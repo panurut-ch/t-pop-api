@@ -19,11 +19,22 @@ export class EventsService {
     try {
       this.logger.log('create');
       console.log('create', createEventDto);
+
+      const existingEvent = await this.prisma.event.findUnique({
+        where: { event_name: createEventDto.event_name },
+      });
+      if (existingEvent) {
+        throw new ConflictException('Event already exists.');
+      }
+
       const data = await this.prisma.event.create({
         data: createEventDto,
       });
       return { message: 'Event Created successfully', data };
     } catch (error) {
+      if (error.code === 'P2002') {
+        throw new ConflictException('Event already exists.');
+      }
       this.logger.error(error.message);
       throw error;
     }
