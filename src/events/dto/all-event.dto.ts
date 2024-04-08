@@ -13,15 +13,15 @@ export class AllEventDto {
   @ApiProperty({ example: 'asc' })
   orderby?: string;
 
-  @ApiProperty({ example: 'Songkarn Day Bangkok 2024' })
+  @ApiProperty()
   event_name?: string;
 
-  @ApiProperty({ example: 'Water festival in thailand summer 2024' })
+  @ApiProperty()
   event_description?: string;
 
-  @ApiProperty({ example: '2024-04-13T03:00:00.000Z' })
+  @ApiProperty()
   event_date?: Date;
 
-  @ApiProperty({ example: 500 })
+  @ApiProperty()
   total_seat?: number;
 }

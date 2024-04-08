@@ -13,11 +13,11 @@ export class CreateEventDto {
   event_description: string;
 
   @IsNotEmpty()
-  @ApiProperty({ example: '2024-04-13 09:00:00.000' })
+  @ApiProperty({ example: '2024-04-13T03:00:00.000Z' })
   event_date: Date;
 
   @IsNumber()
   @IsNotEmpty()
-  @ApiProperty({ example: 800 })
+  @ApiProperty({ example: 200 })
   total_seat: number;
 }

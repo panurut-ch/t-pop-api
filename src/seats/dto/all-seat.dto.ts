@@ -13,18 +13,18 @@ export class AllSeatDto {
   @ApiProperty({ example: 'asc' })
   orderby?: string;
 
-  @ApiProperty({ example: 'General' })
+  @ApiProperty()
   seat_zone?: string;
 
-  @ApiProperty({ example: 'B' })
+  @ApiProperty()
   seat_row?: string;
 
-  @ApiProperty({ example: '' })
+  @ApiProperty()
   seat_number?: string;
 
-  @ApiProperty({ example: 'AVAILABLE' })
+  @ApiProperty()
   seat_status?: string;
 
-  @ApiProperty({ example: 2 })
+  @ApiProperty()
   event_id?: number;
 }
