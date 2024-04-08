@@ -34,4 +34,7 @@ export class SeatEntity implements Seat {
 
   @ApiProperty()
   event_id: number | null;
+
+  @ApiProperty()
+  reserved_user_id: number | null;
 }

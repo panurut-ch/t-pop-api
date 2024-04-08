@@ -8,6 +8,8 @@ import { ConfigModule } from '@nestjs/config';
 import { configuration } from 'config/configuration';
 import { EventsModule } from './events/events.module';
 import { SeatsModule } from './seats/seats.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-redis-store';
 
 const ENV = process.env.NODE_ENV;
 @Module({
@@ -16,6 +18,12 @@ const ENV = process.env.NODE_ENV;
       envFilePath: !ENV ? '.env' : `.env.${ENV}`,
       load: [configuration],
       isGlobal: true,
+    }),
+    CacheModule.register({
+      isGlobal: true,
+      store: redisStore,
+      host: process.env.REDIS_HOST,
+      port: process.env.REDIS_PORT,
     }),
     PrismaModule,
     UsersModule,

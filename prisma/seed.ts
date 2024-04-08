@@ -51,30 +51,33 @@ async function generateSeats(
   const zones = ['VIP', 'General', 'Family'];
   const rows = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-  const seatsPerZone = Math.floor(totalSeats / zones.length);
-  const seatsPerRow = Math.ceil(seatsPerZone / rows.length);
-
   for (let zone of zones) {
     for (let row of rows) {
-      let seatsInRow = seats.filter(
-        (seat) => seat.seat_row === row && seat.seat_zone === zone,
-      ).length;
-      for (let i = 1; i <= seatsPerRow; i++) {
-        if (seats.length < totalSeats && seatsInRow < 10) {
+      for (let i = 1; i <= 20; i++) {
+        if (seats.length >= totalSeats) break;
+
+        const seatNumber = i.toString().padStart(3, '0');
+        const seatExists = seatData.some(
+          (seat) =>
+            seat.seat_zone === zone &&
+            seat.seat_row === row &&
+            seat.seat_number === seatNumber,
+        );
+
+        if (!seatExists) {
           seats.push({
             seat_zone: zone,
             seat_row: row,
-            seat_number: i.toString().padStart(3, '0'),
+            seat_number: seatNumber,
             seat_status: 'AVAILABLE',
           });
-          seatsInRow++;
         }
       }
     }
   }
 
   for (let i = 0; i < Math.min(seatData.length, seats.length); i++) {
-    seats[i] = seatData[i];
+    seats[i] = { ...seats[i], ...seatData[i] };
   }
 
   return seats;

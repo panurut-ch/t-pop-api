@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
+  Put,
+  Query,
 } from '@nestjs/common';
 import { SeatsService } from './seats.service';
 import { CreateSeatDto } from './dto/create-seat.dto';
@@ -19,42 +21,40 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { ReserveSeatDto } from './dto/reserve-seat.dto';
+import { ViewReservedSeatDto } from './dto/view-reserved.dto';
 
 @Controller('seats')
+@ApiTags('seats')
 export class SeatsController {
   constructor(private readonly seatsService: SeatsService) {}
 
-  @Post()
-  create(@Body() createSeatDto: CreateSeatDto) {
-    return this.seatsService.create(createSeatDto);
-  }
-
-  @Get()
+  @Post('/add')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  async findAll() {
-    return await this.seatsService.findAll();
+  async create(@Body() createSeatDto: CreateSeatDto[]) {
+    return await this.seatsService.create(createSeatDto);
   }
 
-  @Post('all')
+  @Get('filter')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  async findAllPaging(@Body() allSeatDto: AllSeatDto) {
+  async findAllPaging(@Query() allSeatDto: AllSeatDto) {
     return await this.seatsService.findAllPaging(allSeatDto);
   }
 
-  @Get(':id')
+  @Get('/detail/:id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  findOne(@Param('id') id: string) {
-    return this.seatsService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.seatsService.findOne(+id);
   }
 
-  @Patch('/update/:id')
+  @Put('/update/:id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  update(@Param('id') id: string, @Body() updateSeatDto: UpdateSeatDto) {
-    return this.seatsService.update(+id, updateSeatDto);
+  async update(@Param('id') id: string, @Body() updateSeatDto: UpdateSeatDto) {
+    return await this.seatsService.update(+id, updateSeatDto);
   }
 
   @Delete('/delete/:id')
@@ -62,5 +62,19 @@ export class SeatsController {
   @ApiBearerAuth()
   async remove(@Param('id') id: string) {
     return await this.seatsService.remove(+id);
+  }
+
+  @Post('/reserve')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async reserve(@Body() reserveSeatDto: ReserveSeatDto[]) {
+    return await this.seatsService.reserve(reserveSeatDto);
+  }
+
+  @Get('/view-reserved')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async viewReservedSeat(@Query() viewReservedSeatDto: ViewReservedSeatDto) {
+    return await this.seatsService.viewReservedSeat(viewReservedSeatDto);
   }
 }

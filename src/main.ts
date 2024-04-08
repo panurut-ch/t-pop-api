@@ -9,6 +9,7 @@ async function bootstrap() {
   app.enableCors();
   const configService = app.get(ConfigService);
   const logger = new Logger('Bootstrap');
+  app.setGlobalPrefix(configService.get('API_VERSION'));
 
   const config = new DocumentBuilder()
     .setTitle('T-POP API')
@@ -20,7 +21,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  const port = configService.get('port') || 3000
+  const port = configService.get('PORT') || 3000
   await app.listen(port);
 
   logger.log(`Application is running on port ${port}`);

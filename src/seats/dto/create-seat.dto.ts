@@ -5,24 +5,28 @@ import { SeatStatus } from '../entities/seat.entity';
 export class CreateSeatDto {
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({ example: 'General' })
   seat_zone: string;
 
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({ example: 'Z' })
   seat_row: string;
 
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({ example: '010' })
   seat_number: string;
 
-  @ApiProperty({ enum: SeatStatus, enumName: 'SeatStatus' })
+  @ApiProperty({
+    enum: SeatStatus,
+    enumName: 'SeatStatus',
+    example: 'AVAILABLE',
+  })
   seat_status: SeatStatus;
 
   @IsNumber()
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({ example: 1 })
   event_id: number;
 }
