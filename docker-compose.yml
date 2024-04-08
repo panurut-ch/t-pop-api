@@ -24,21 +24,23 @@ services:
       interval: 10s
       retries: 5
 
-  # app:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   container_name: t-pop-api
-  #   environment:
-  #     - PORT=${PORT}
-  #     - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/t-pop-db-db
-  #   ports:
-  #     - '3000:3000'
-  #   depends_on:
-  #     - postgres
-  #   volumes:
-  #     - ./src:/app/src
-  #   command: bash -c "npx prisma generate && npm run migrate:postgres && npx prisma db seed && npm run start"
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: t-pop-api
+    environment:
+      - PORT=${PORT}
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/t-pop-db-db
+      - REDIS_HOST=host.docker.internal
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgres
+    volumes:
+      - ./src:/app/src
+    command: bash -c "npx prisma generate && npm run migrate:postgres && npx prisma db seed && npm run start"
+
 volumes:
   postgres:
   redis:
