@@ -1,4 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional } from 'class-validator';
 
 export class AllEventDto {
   @ApiProperty({ example: 1 })
@@ -8,20 +9,26 @@ export class AllEventDto {
   perpage: number;
 
   @ApiProperty({ example: 'id' })
+  @IsOptional()
   sortbycolumn?: string;
 
   @ApiProperty({ example: 'asc' })
+  @IsOptional()
   orderby?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   event_name?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   event_description?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   event_date?: Date;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   total_seat?: number;
 }

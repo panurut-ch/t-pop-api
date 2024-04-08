@@ -1,4 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional } from 'class-validator';
 
 export class AllUserDto {
   @ApiProperty({ example: 1 })
@@ -13,9 +14,11 @@ export class AllUserDto {
   @ApiProperty({ example: 'asc' })
   orderby?: string;
 
-  @ApiProperty({ example: '' })
+  @ApiPropertyOptional()
+  @IsOptional()
   name?: string;
 
-  @ApiProperty({ example: '' })
+  @ApiPropertyOptional()
+  @IsOptional()
   email?: string;
 }

@@ -1,4 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional } from 'class-validator';
 
 export class AllSeatDto {
   @ApiProperty({ example: 1 })
@@ -13,18 +14,23 @@ export class AllSeatDto {
   @ApiProperty({ example: 'asc' })
   orderby?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   seat_zone?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   seat_row?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   seat_number?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   seat_status?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   event_id?: number;
 }
