@@ -53,6 +53,53 @@ export class EventsService {
   ): Promise<{ data: any[]; total: number }> {
     try {
       console.log('allEventDto', allEventDto);
+
+      const hasFilters =
+        allEventDto.event_name ||
+        allEventDto.event_description ||
+        allEventDto.event_date ||
+        allEventDto.total_seat;
+
+      if (hasFilters) {
+        const page = Number(allEventDto.page) || 1;
+        const perpage = Number(allEventDto.perpage) || 10;
+        const sortbycolumn = allEventDto.sortbycolumn || 'id';
+        const orderby = allEventDto.orderby || 'asc';
+        const skip = (page - 1) * perpage;
+
+        const orderBy = {};
+        orderBy[sortbycolumn] = orderby;
+
+        const filterOptions: Prisma.EventWhereInput = {};
+        if (allEventDto.event_name) {
+          filterOptions.event_name = { contains: allEventDto.event_name };
+        }
+        if (allEventDto.event_description) {
+          filterOptions.event_description = {
+            contains: allEventDto.event_description,
+          };
+        }
+        if (allEventDto.event_date) {
+          filterOptions.event_date = allEventDto.event_date;
+        }
+        if (allEventDto.total_seat) {
+          filterOptions.total_seat = allEventDto.total_seat;
+        }
+
+        const [data, total] = await Promise.all([
+          this.prisma.event.findMany({
+            where: filterOptions,
+            orderBy: orderBy,
+            take: perpage,
+            skip: skip,
+          }),
+          this.prisma.event.count({ where: filterOptions }),
+        ]);
+
+        console.log('Data fetched without cache due to filters:', data);
+        return { total, data };
+      }
+
       const cacheKey = 'findAllPaging';
       const cachedData: { data: any[]; total: number } =
         await this.cacheService.get(cacheKey);
@@ -71,30 +118,13 @@ export class EventsService {
       const orderBy = {};
       orderBy[sortbycolumn] = orderby;
 
-      const filterOptions: Prisma.EventWhereInput = {};
-      if (allEventDto.event_name) {
-        filterOptions.event_name = { contains: allEventDto.event_name };
-      }
-      if (allEventDto.event_description) {
-        filterOptions.event_description = {
-          contains: allEventDto.event_description,
-        };
-      }
-      if (allEventDto.event_date) {
-        filterOptions.event_date = allEventDto.event_date;
-      }
-      if (allEventDto.total_seat) {
-        filterOptions.total_seat = allEventDto.total_seat;
-      }
-
       const [data, total] = await Promise.all([
         this.prisma.event.findMany({
-          where: filterOptions,
           orderBy: orderBy,
           take: perpage,
           skip: skip,
         }),
-        this.prisma.event.count({ where: filterOptions }),
+        this.prisma.event.count(),
       ]);
 
       await this.cacheService.set(cacheKey, { total, data }, 3600);
