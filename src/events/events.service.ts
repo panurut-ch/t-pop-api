@@ -2,18 +2,25 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  Inject,
+  Logger,
 } from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { PrismaService } from '../../src/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
-import { Logger } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { AllEventDto } from './dto/all-event.dto';
 
 @Injectable()
 export class EventsService {
   private readonly logger = new Logger(EventsService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Inject(CACHE_MANAGER) private cacheService: Cache,
+  ) {}
 
   async create(createEventDto: CreateEventDto) {
     try {
@@ -30,6 +37,7 @@ export class EventsService {
       const data = await this.prisma.event.create({
         data: createEventDto,
       });
+      await this.invalidateCache();
       return { message: 'Event Created successfully', data };
     } catch (error) {
       if (error.code === 'P2002') {
@@ -40,12 +48,22 @@ export class EventsService {
     }
   }
 
-  async findAllPaging(allEventDto): Promise<{ data: any[]; total: number }> {
+  async findAllPaging(
+    allEventDto: AllEventDto,
+  ): Promise<{ data: any[]; total: number }> {
     try {
-      this.logger.log('findAllPaging function');
       console.log('allEventDto', allEventDto);
-      const page = parseInt(allEventDto.page) || 1;
-      const perpage = parseInt(allEventDto.perpage) || 10;
+      const cacheKey = 'findAllPaging';
+      const cachedData: { data: any[]; total: number } =
+        await this.cacheService.get(cacheKey);
+
+      if (cachedData) {
+        console.log('Data fetched from cache:', cachedData);
+        return cachedData;
+      }
+
+      const page = Number(allEventDto.page) || 1;
+      const perpage = Number(allEventDto.perpage) || 10;
       const sortbycolumn = allEventDto.sortbycolumn || 'id';
       const orderby = allEventDto.orderby || 'asc';
       const skip = (page - 1) * perpage;
@@ -78,6 +96,10 @@ export class EventsService {
         }),
         this.prisma.event.count({ where: filterOptions }),
       ]);
+
+      await this.cacheService.set(cacheKey, { total, data }, 3600);
+
+      console.log('Data fetched from source and cached:', data);
       return { total, data };
     } catch (error) {
       this.logger.error(error.message);
@@ -115,11 +137,12 @@ export class EventsService {
       }
 
       try {
-        const data = await this.prisma.event.update({
+        const updatedEvent = await this.prisma.event.update({
           where: { id },
           data: updateEventDto,
         });
-        return { message: 'Event Updated successfully', data };
+        await this.invalidateCache();
+        return { message: 'Event Updated successfully', data: updatedEvent };
       } catch (error) {
         if (error.code === 'P2002') {
           throw new ConflictException('Event already exists.');
@@ -146,10 +169,17 @@ export class EventsService {
       const data = await this.prisma.event.delete({
         where: { id },
       });
+      await this.invalidateCache();
       return { message: 'Event Removed successfully', data };
     } catch (error) {
       this.logger.error(error.message);
       throw error;
     }
+  }
+
+  async invalidateCache(): Promise<void> {
+    const cacheKey = 'findAllPaging';
+    const del_cache = await this.cacheService.del(cacheKey);
+    this.logger.log('del_cache : ' + del_cache);
   }
 }
