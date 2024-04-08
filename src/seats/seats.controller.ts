@@ -19,6 +19,7 @@ import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiTags,
+  ApiBody,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ReserveSeatDto } from './dto/reserve-seat.dto';
@@ -67,6 +68,7 @@ export class SeatsController {
   @Post('/reserve')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @ApiBody({ type: [ReserveSeatDto] })
   async reserve(@Body() reserveSeatDto: ReserveSeatDto[]) {
     return await this.seatsService.reserve(reserveSeatDto);
   }
