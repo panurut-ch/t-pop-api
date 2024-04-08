@@ -1,73 +1,76 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+This is a [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project for T-POP Incorporation Assignment: Backend Engineer
+Developed by Panurut Chinakul
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Database
+- PostgreSQL
 
-## Description
+## Library
+- Nest.js
+- Passport.js
+- Bcrypt.js
+- Swagger
+- Jest
+- Prisma
+- class-validator
+- Redis
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
-
+## How to run local
 ```bash
-$ npm install
+npm install
 ```
-
-## Running the app
-
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run start:dev
 ```
-
-## Test
-
+API will live on
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+http://localhost:3001/
 ```
+url : http://localhost:3001/
 
-## Support
+## How to run with Docker
+```bash
+docker-compose build --no-cache
+```
+```bash
+docker-compose up -d
+```
+API will live on
+```bash
+http://localhost:3000/
+```
+url : http://localhost:3000/
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## API Document
+```bash
+http://localhost:3000/api/
+```
+url : http://localhost:3000/api/
 
-## Stay in touch
+![api_doc](https://cdn.discordapp.com/attachments/1109223763075154001/1226820281574756414/image.png?ex=6626286c&is=6613b36c&hm=0551abc8ca2573de4934fb4c88ebb74376aad7dd364735b48dc068ae7a3254a1&) 
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Unit Test
+test auth service
+```bash
+npm run test:auth
+```
+test seat service
+```bash
+npm run test:seat
+```
+![test_auth](https://cdn.discordapp.com/attachments/1109223763075154001/1226820569316458496/image.png?ex=662628b0&is=6613b3b0&hm=0af3676389e561d0f89bc2e4a72dff126af8497ab86d3e08b005d0ee3cbd629d&)  
 
-## License
+![test_seat](https://cdn.discordapp.com/attachments/1109223763075154001/1226820730814205982/image.png?ex=662628d7&is=6613b3d7&hm=7fd4e92bc52f8b206aa503f5e95ff1d85981d35ede5957728ae38f46e0d12a43&)
 
-Nest is [MIT licensed](LICENSE).
+## Caching with Redis  
+Caching data for API `/api/v1/events/filter` : list events data  
+
+![redis](https://cdn.discordapp.com/attachments/1109223763075154001/1226821419023732746/image.png?ex=6626297b&is=6613b47b&hm=dedff794c308350bf12a76df254572405aeda6059d2615d6e051e255e98c50d3&)  
+
+## User & Password for test
+email: panurut@panurut.dev  
+password: password-panurut
+
+email: hello@t-pop.com  
+password: password-t-pop
