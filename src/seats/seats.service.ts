@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { CreateSeatDto } from './dto/create-seat.dto';
 import { UpdateSeatDto } from './dto/update-seat.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from './../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { Logger } from '@nestjs/common';
 import { ReserveSeatDto } from './dto/reserve-seat.dto';

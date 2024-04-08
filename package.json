@@ -21,7 +21,8 @@
     "reset:dev": "dotenv -e .env.development -- npx prisma migrate reset --force && dotenv -e .env.development -- npx prisma generate",
     "migrate:postgres": "dotenv -e .env.development -- npx prisma generate && dotenv -e .env.development -- npx prisma migrate dev --name init && dotenv -e .env.development -- npm run seed:dev",
     "seed:dev": "dotenv -e .env.development -- ts-node prisma/seed.ts",
-    "test:auth": "jest --testPathPattern=auth.service.spec.ts"
+    "test:auth": "jest --testPathPattern=auth.service.spec.ts",
+    "test:seat": "jest --testPathPattern=seats.service.spec.ts"
   },
   "dependencies": {
     "@nestjs/cache-manager": "^2.2.2",
